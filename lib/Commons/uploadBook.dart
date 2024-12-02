@@ -321,34 +321,41 @@ class _UploadBookState extends State<UploadBook> {
                         _categoryController.text.isNotEmpty &&
                         _piecesController.text.isNotEmpty &&
                         imgFile?.path != null) {
-                      uploadImageToCloudinary(context).then((value) {
-                        if (imgUrl!.isNotEmpty) {
-                          Map<String, dynamic> bookInfo = {
-                            "title": _titleController.text,
-                            "author": _authorController.text,
-                            "createdOn": FieldValue.serverTimestamp(),
-                            "image": imgUrl,
-                            "pieces": _piecesController.text,
-                            "category": _categoryController.text,
-                            "description": _descController.text
-                          };
-                          FirebaseFirestore.instance
-                              .collection("books")
-                              .doc()
-                              .set(bookInfo)
-                              .then((value) => {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => DashBoard()),
-                                    )
-                                  });
-                        } else {
-                          Navigator.pop(context);
+                      if (RegExp(r'^[0-9]+$')
+                          .hasMatch(_piecesController.text)) {
+                        uploadImageToCloudinary(context).then((value) {
+                          if (imgUrl!.isNotEmpty) {
+                            Map<String, dynamic> bookInfo = {
+                              "title": _titleController.text,
+                              "author": _authorController.text,
+                              "createdOn": FieldValue.serverTimestamp(),
+                              "image": imgUrl,
+                              "pieces": _piecesController.text,
+                              "category": _categoryController.text,
+                              "description": _descController.text
+                            };
+                            FirebaseFirestore.instance
+                                .collection("books")
+                                .doc()
+                                .set(bookInfo)
+                                .then((value) => {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => DashBoard()),
+                                      )
+                                    });
+                          } else {
+                            Navigator.pop(context);
 
-                          showSnackBarMsg(context, "Something went wrong");
-                        }
-                      });
+                            showSnackBarMsg(context, "Something went wrong");
+                          }
+                        });
+                      } else {
+                        Navigator.pop(context);
+
+                        showSnackBarMsg(context, "Invalid Number of books");
+                      }
                     } else {
                       Navigator.pop(context);
 

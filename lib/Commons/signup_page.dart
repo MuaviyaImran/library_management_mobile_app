@@ -159,7 +159,12 @@ class _SignUpPageState extends State<SignUpPage> {
                       name: nameController.text,
                       password: passwordController.text,
                       phone: phoneController.text);
+
                   showSnackBarMsg(context, msg);
+                  emailController.text = "";
+                  nameController.text = "";
+                  passwordController.text = "";
+                  phoneController.text = "";
                 },
                 textColor: Colors.black,
                 child: Text("Sign Up"),

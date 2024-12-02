@@ -48,7 +48,6 @@ class _ProfileState extends State<Profile> {
     }
   }
 
-  FirebaseStorage _storage = FirebaseStorage.instance;
   String? imgUrl;
   Future<String?> uploadImageToCloudinary(
     context,

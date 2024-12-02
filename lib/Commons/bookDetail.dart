@@ -221,13 +221,18 @@ class _BookDetailState extends State<BookDetail> {
                   const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12),
               child: InkWell(
                 onTap: (() async {
+                  print('1');
                   if (generalAppUser['Books_Issued'] != ADMIN_EMAIL) {
+                    print('2');
                     CustomProgressIndicatorDialog(context: context);
                     if (widget.vatData['pieces'] == 0) {
+                      print('3');
                       showSnackBarMsg(context,
                           "The Book ${widget.vatData['title']} is not available");
                     } else {
+                      print('4');
                       if (generalAppUser['Books_Issued'] >= 5) {
+                        print('5');
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -236,6 +241,10 @@ class _BookDetailState extends State<BookDetail> {
                         showSnackBarMsg(
                             context, "You already have exceeded the limit");
                       } else {
+                        print(
+                          '---------------------------',
+                        );
+                        print(widget.vatData['pieces']);
                         await fireStore
                             .collection("books")
                             .doc(widget.vatData.id)

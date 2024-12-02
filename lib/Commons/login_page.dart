@@ -165,11 +165,16 @@ class _LoginScreenState extends State<LoginScreen> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20)),
                               onPressed: () async {
-                                await firebase_auth.login(
-                                  context: context,
-                                  password: loginPasswordController.text,
-                                  email: loginEmailController.text,
-                                );
+                                await firebase_auth
+                                    .login(
+                                      context: context,
+                                      password: loginPasswordController.text,
+                                      email: loginEmailController.text,
+                                    )
+                                    .then((value) => {
+                                          loginEmailController.clear(),
+                                          loginPasswordController.clear()
+                                        });
                               },
                               textColor: Colors.black,
                               child: Text("Login"),
