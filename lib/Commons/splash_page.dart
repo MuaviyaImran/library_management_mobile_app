@@ -62,12 +62,12 @@ class _SplashPageState extends State<SplashPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image(
-              image: AssetImage("assets/images/logo_with_text.png"),
+              image: AssetImage("assets/images/logo_with_text.jpg"),
             ),
             Padding(
               padding: const EdgeInsets.only(top: 14.0),
               child: Text(
-                "Library Management System",
+                "Lib Online System",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontFamily: ' Itim-Regular',

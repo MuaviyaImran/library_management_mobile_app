@@ -69,7 +69,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 //Text Descriptions
                 Text(
-                  "Welcome To Lybrio~",
+                  "Welcome To",
+                  style: TextStyle(
+                      fontFamily: ' Itim-Regular',
+                      fontSize: 27,
+                      fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "Lib Online System~",
                   style: TextStyle(
                       fontFamily: ' Itim-Regular',
                       fontSize: 27,

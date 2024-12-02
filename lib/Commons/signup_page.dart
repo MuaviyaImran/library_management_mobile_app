@@ -229,7 +229,14 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
                 //Text Descriptions
                 Text(
-                  "Welcome To Lybrio~",
+                  "Welcome To ",
+                  style: TextStyle(
+                      fontFamily: ' Itim-Regular',
+                      fontSize: 27,
+                      fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "Lib Online System~",
                   style: TextStyle(
                       fontFamily: ' Itim-Regular',
                       fontSize: 27,
