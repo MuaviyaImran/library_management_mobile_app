@@ -1,10 +1,11 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'dart:convert';
 import 'dart:io';
+import 'package:http/http.dart' as http;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:library_management/Commons/HomeScreen.dart';
@@ -49,20 +50,38 @@ class _ProfileState extends State<Profile> {
 
   FirebaseStorage _storage = FirebaseStorage.instance;
   String? imgUrl;
-  Future<String?> uploadImageToFireStore(context) async {
+  Future<String?> uploadImageToCloudinary(
+    context,
+  ) async {
     CustomProgressIndicatorDialog(context: context);
     try {
-      Reference storageRef = _storage.ref().child(
-          "Profile_pictures/${imgFile!.path.substring(imgFile!.path.lastIndexOf('/') + 1)}");
-      UploadTask uploadTask = storageRef.putFile(imgFile!);
-      await uploadTask.then((e) async {
-        await e.ref.getDownloadURL().then((value) {
-          imgUrl = value;
-        });
-      });
+      const cloudName = 'dmmip8ojz'; // Replace with your Cloudinary cloud name
+      const uploadPreset = 'library'; // Replace with your unsigned preset name
+
+      final url =
+          Uri.parse('https://api.cloudinary.com/v1_1/$cloudName/image/upload');
+
+      // Prepare the request
+      final request = http.MultipartRequest('POST', url)
+        ..fields['upload_preset'] = uploadPreset
+        ..files.add(await http.MultipartFile.fromPath('file', imgFile!.path));
+
+      // Send the request
+      final response = await request.send();
+      if (response.statusCode == 200) {
+        final responseData = await http.Response.fromStream(response);
+        final jsonResponse = json.decode(responseData.body);
+        imgUrl = jsonResponse[
+            'secure_url']; // The Cloudinary URL for the uploaded image
+      } else {
+        print('Image upload failed with status code: ${response.statusCode}');
+      }
     } catch (e) {
-      print(e.toString());
+      print('Error uploading to Cloudinary: $e');
+    } finally {
+      Navigator.pop(context); // Hide the progress indicator
     }
+
     return imgUrl;
   }
 
@@ -199,7 +218,7 @@ class _ProfileState extends State<Profile> {
               child: InkWell(
                 onTap: () {
                   CustomProgressIndicatorDialog(context: context);
-                  uploadImageToFireStore(context).then((value) async {
+                  uploadImageToCloudinary(context).then((value) async {
                     try {
                       await fireStore
                           .collection(ALLUSERS)
