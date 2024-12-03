@@ -22,12 +22,16 @@ class BookDetail extends StatefulWidget {
 
 class _BookDetailState extends State<BookDetail> {
   var generalAppUser;
+  bool isAlreadyAssigned = false;
   @override
   void initState() {
     // TODO: implement initState
     generalAppUser =
         Provider.of<userDataProvider>(context, listen: false).loggedInUserData;
     super.initState();
+    final vatDataMap = widget.vatData.data() as Map<String, dynamic>;
+    isAlreadyAssigned =
+        (vatDataMap['assignedTo'] as List).contains(generalAppUser['UID']);
   }
 
   @override
@@ -221,79 +225,85 @@ class _BookDetailState extends State<BookDetail> {
                   const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12),
               child: InkWell(
                 onTap: (() async {
-                  if (generalAppUser['Books_Issued'] != ADMIN_EMAIL) {
-                    CustomProgressIndicatorDialog(context: context);
-                    if (widget.vatData['pieces'] == 0) {
-                      showSnackBarMsg(context,
-                          "The Book ${widget.vatData['title']} is not available");
-                    } else {
-                      if (generalAppUser['Books_Issued'] >= 5) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => BookCollections()),
-                        );
-                        showSnackBarMsg(
-                            context, "You already have exceeded the limit");
+                  if (isAlreadyAssigned == false) {
+                    if (generalAppUser['Books_Issued'] != ADMIN_EMAIL) {
+                      CustomProgressIndicatorDialog(context: context);
+                      if (widget.vatData['pieces'] == 0) {
+                        showSnackBarMsg(context,
+                            "The Book ${widget.vatData['title']} is not available");
                       } else {
-                        await fireStore
-                            .collection("books")
-                            .doc(widget.vatData.id)
-                            .update({
-                          'pieces': widget.vatData['pieces'] - 1
-                        }).then((value) async {
+                        if (generalAppUser['Books_Issued'] >= 5) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => BookCollections()),
+                          );
+                          showSnackBarMsg(
+                              context, "You already have exceeded the limit");
+                        } else {
                           await fireStore
-                              .collection(ALLUSERS)
-                              .doc(generalAppUser['UID'])
+                              .collection("books")
+                              .doc(widget.vatData.id)
                               .update({
-                            'Books_Issued': generalAppUser['Books_Issued'] + 1
+                            'pieces': widget.vatData['pieces'] - 1,
+                            'assignedTo':
+                                FieldValue.arrayUnion([generalAppUser['UID']])
                           }).then((value) async {
-                            SharedPreferenceHelper sp =
-                                SharedPreferenceHelper();
-                            sp.saveBooksIssued(
-                                generalAppUser['Books_Issued'] + 1);
-                            Map<String, dynamic> bookInfo = {
-                              "title": widget.vatData['title'],
-                              "issued_on":
-                                  DateTime.now().toString().split(' ')[0],
-                              "return_Date": DateTime.now()
-                                  .add(Duration(days: 5))
-                                  .toString()
-                                  .split(' ')[0],
-                              "author": widget.vatData['author'],
-                              "image": widget.vatData['image'],
-                              "category": widget.vatData['category'],
-                            };
                             await fireStore
                                 .collection(ALLUSERS)
                                 .doc(generalAppUser['UID'])
-                                .collection("Issued_Books")
-                                .doc(widget.vatData.id)
-                                .set(bookInfo);
-                            Map<dynamic, dynamic> loggedInUserData = {
-                              'email': generalAppUser["email"],
-                              'name': generalAppUser['name'],
-                              'phone': generalAppUser['phone'],
-                              'UID': generalAppUser['UID'],
-                              'profileUrl': generalAppUser['profileUrl'],
-                              'Books_Issued':
-                                  (generalAppUser['Books_Issued'] + 1),
-                              'fine': generalAppUser['fine']
-                            };
-                            Provider.of<userDataProvider>(context,
-                                    listen: false)
-                                .saveUser(loggedInUserData);
+                                .update({
+                              'Books_Issued': generalAppUser['Books_Issued'] + 1
+                            }).then((value) async {
+                              SharedPreferenceHelper sp =
+                                  SharedPreferenceHelper();
+                              sp.saveBooksIssued(
+                                  generalAppUser['Books_Issued'] + 1);
+                              Map<String, dynamic> bookInfo = {
+                                "title": widget.vatData['title'],
+                                "issued_on":
+                                    DateTime.now().toString().split(' ')[0],
+                                "return_Date": DateTime.now()
+                                    .add(Duration(days: 5))
+                                    .toString()
+                                    .split(' ')[0],
+                                "author": widget.vatData['author'],
+                                "image": widget.vatData['image'],
+                                "category": widget.vatData['category'],
+                              };
+                              await fireStore
+                                  .collection(ALLUSERS)
+                                  .doc(generalAppUser['UID'])
+                                  .collection("Issued_Books")
+                                  .doc(widget.vatData.id)
+                                  .set(bookInfo);
+                              Map<dynamic, dynamic> loggedInUserData = {
+                                'email': generalAppUser["email"],
+                                'name': generalAppUser['name'],
+                                'phone': generalAppUser['phone'],
+                                'UID': generalAppUser['UID'],
+                                'profileUrl': generalAppUser['profileUrl'],
+                                'Books_Issued':
+                                    (generalAppUser['Books_Issued'] + 1),
+                                'fine': generalAppUser['fine']
+                              };
+                              Provider.of<userDataProvider>(context,
+                                      listen: false)
+                                  .saveUser(loggedInUserData);
 
-                            showSnackBarMsg(context, "Book Issued");
+                              showSnackBarMsg(context, "Book Issued");
+                            });
                           });
-                        });
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => BookCollections()),
-                        );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => BookCollections()),
+                          );
+                        }
                       }
                     }
+                  } else {
+                    showSnackBarMsg(context, "Book Already Issued");
                   }
                 }),
                 child: Container(
@@ -307,7 +317,7 @@ class _BookDetailState extends State<BookDetail> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Issue Me",
+                            isAlreadyAssigned ? "Already Issued" : "Issue Me",
                             style: TextStyle(
                                 fontFamily: ' Itim-Regular',
                                 fontSize: 19,

@@ -330,9 +330,10 @@ class _UploadBookState extends State<UploadBook> {
                               "author": _authorController.text,
                               "createdOn": FieldValue.serverTimestamp(),
                               "image": imgUrl,
-                              "pieces": _piecesController.text,
+                              "pieces": int.tryParse(_piecesController.text),
                               "category": _categoryController.text,
-                              "description": _descController.text
+                              "description": _descController.text,
+                              "assignedTo": [],
                             };
                             FirebaseFirestore.instance
                                 .collection("books")
