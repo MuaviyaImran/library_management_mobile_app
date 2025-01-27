@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:library_management/Commons/HomeScreen.dart';
-import 'package:library_management/Commons/bookCollections.dart';
+import 'package:library_management/Commons/bookCategory.dart';
 import 'package:library_management/firebase/Shared_Preferences.dart';
 import 'package:library_management/firebase/loggedInUserData.dart';
 import 'package:library_management/utils/appConstants.dart';
@@ -79,7 +79,11 @@ class _BookDetailState extends State<BookDetail> {
                       )
                     ],
                   ),
+                  SizedBox(
+                    width: 10,
+                  ),
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Padding(
@@ -134,7 +138,7 @@ class _BookDetailState extends State<BookDetail> {
                     'Details',
                     style: TextStyle(
                       fontFamily: ' Itim-Regular',
-                      fontSize: 30,
+                      fontSize: 20,
                     ),
                   ),
                 ],
@@ -149,7 +153,7 @@ class _BookDetailState extends State<BookDetail> {
                     "Category : ",
                     style: TextStyle(
                       fontFamily: ' Itim-Regular',
-                      fontSize: 20,
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -157,7 +161,7 @@ class _BookDetailState extends State<BookDetail> {
                     widget.vatData['category'],
                     style: TextStyle(
                       fontFamily: ' Itim-Regular',
-                      fontSize: 20,
+                      fontSize: 14,
                     ),
                   ),
                 ],
@@ -172,7 +176,7 @@ class _BookDetailState extends State<BookDetail> {
                     'Pieces : ',
                     style: TextStyle(
                       fontFamily: ' Itim-Regular',
-                      fontSize: 20,
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -180,7 +184,7 @@ class _BookDetailState extends State<BookDetail> {
                     widget.vatData['pieces'].toString(),
                     style: TextStyle(
                       fontFamily: ' Itim-Regular',
-                      fontSize: 20,
+                      fontSize: 14,
                     ),
                   ),
                 ],
@@ -194,7 +198,7 @@ class _BookDetailState extends State<BookDetail> {
                     'Description',
                     style: TextStyle(
                       fontFamily: ' Itim-Regular',
-                      fontSize: 30,
+                      fontSize: 20,
                     ),
                   ),
                 ],
@@ -213,7 +217,7 @@ class _BookDetailState extends State<BookDetail> {
                       softWrap: false,
                       style: TextStyle(
                         fontFamily: ' Itim-Regular',
-                        fontSize: 17,
+                        fontSize: 14,
                       ),
                     ),
                   ),
@@ -236,7 +240,7 @@ class _BookDetailState extends State<BookDetail> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => BookCollections()),
+                                builder: (context) => BookCategories()),
                           );
                           showSnackBarMsg(
                               context, "You already have exceeded the limit");
@@ -297,7 +301,7 @@ class _BookDetailState extends State<BookDetail> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => BookCollections()),
+                                builder: (context) => BookCategories()),
                           );
                         }
                       }

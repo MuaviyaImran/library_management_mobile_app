@@ -3,7 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:library_management/Commons/allUsers.dart';
-import 'package:library_management/Commons/bookCollections.dart';
+import 'package:library_management/Commons/bookCategory.dart';
 import 'package:library_management/Commons/returnBook.dart';
 import 'package:library_management/Commons/totalReturns.dart';
 import 'package:library_management/Commons/uploadBook.dart';
@@ -177,7 +177,7 @@ class _DashBoardState extends State<DashBoard> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => BookCollections()));
+                          builder: (context) => BookCategories()));
                 } else if (gridCardData[index].title == "Book Return") {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => ReturnBook()));

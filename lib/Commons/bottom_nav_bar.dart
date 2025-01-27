@@ -2,13 +2,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:library_management/Commons/HomeScreen.dart';
-import 'package:library_management/Commons/bookCollections.dart';
+import 'package:library_management/Commons/bookCategory.dart';
 import 'package:library_management/Commons/profile.dart';
 import 'package:library_management/utils/colors.dart';
 
 class BottomNavBar extends StatefulWidget {
-  BottomNavBar({Key? key ,required this.selectedIndex}) : super(key: key);
-int selectedIndex;
+  BottomNavBar({Key? key, required this.selectedIndex}) : super(key: key);
+  int selectedIndex;
   @override
   State<BottomNavBar> createState() => _BottomNavBarState();
 }
@@ -40,14 +40,14 @@ class _BottomNavBarState extends State<BottomNavBar> {
       unselectedLabelStyle: TextStyle(color: Colors.grey),
       onTap: (index) {
         setState(() {
-           widget.selectedIndex = index;
-          if ( widget.selectedIndex == 0) {
+          widget.selectedIndex = index;
+          if (widget.selectedIndex == 0) {
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => DashBoard()));
-          } else if ( widget.selectedIndex == 1) {
+          } else if (widget.selectedIndex == 1) {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => BookCollections()));
-          } else if ( widget.selectedIndex == 2) {
+                MaterialPageRoute(builder: (context) => BookCategories()));
+          } else if (widget.selectedIndex == 2) {
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => Profile()));
           }
