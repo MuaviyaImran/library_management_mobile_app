@@ -37,100 +37,106 @@ class _BookDetailState extends State<BookDetail> {
   @override
   Widget build(BuildContext context) {
     FirebaseFirestore fireStore = FirebaseFirestore.instance;
-    void showSecurityFeeDialog(
-      BuildContext context,
-    ) {
+
+    assignMe() async {
+      try {
+        // Check if the widget is still mounted before proceeding.
+
+        // Perform Firebase update to decrease pieces and assign the book to the user.
+        await fireStore.collection("books").doc(widget.vatData.id).update({
+          'pieces': widget.vatData['pieces'] - 1,
+          'assignedTo': FieldValue.arrayUnion([generalAppUser['UID']])
+        }).then((value) async {
+          // Update the user with the number of books issued.
+          await fireStore
+              .collection(ALLUSERS)
+              .doc(generalAppUser['UID'])
+              .update({
+            'Books_Issued': generalAppUser['Books_Issued'] + 1
+          }).then((value) async {
+            // Save the updated number of books issued in SharedPreferences.
+            SharedPreferenceHelper sp = SharedPreferenceHelper();
+            sp.saveBooksIssued(generalAppUser['Books_Issued'] + 1);
+
+            // Prepare book information for user's issued books collection.
+            Map<String, dynamic> bookInfo = {
+              "title": widget.vatData['title'],
+              "issued_on": DateTime.now().toString().split(' ')[0],
+              "return_Date": DateTime.now()
+                  .add(Duration(days: 5))
+                  .toString()
+                  .split(' ')[0],
+              "author": widget.vatData['author'],
+              "image": widget.vatData['image'],
+              "category": widget.vatData['category'],
+            };
+
+            // Add the book to the user's issued books collection.
+            await fireStore
+                .collection(ALLUSERS)
+                .doc(generalAppUser['UID'])
+                .collection("Issued_Books")
+                .doc(widget.vatData.id)
+                .set(bookInfo);
+
+            // Update the logged-in user's data in the provider.
+            Map<dynamic, dynamic> loggedInUserData = {
+              'email': generalAppUser["email"],
+              'name': generalAppUser['name'],
+              'phone': generalAppUser['phone'],
+              'UID': generalAppUser['UID'],
+              'profileUrl': generalAppUser['profileUrl'],
+              'Books_Issued': (generalAppUser['Books_Issued'] + 1),
+              'fine': generalAppUser['fine']
+            };
+            Provider.of<userDataProvider>(context, listen: false)
+                .saveUser(loggedInUserData);
+
+            // Record the security fee payment in Firestore.
+            fireStore.collection('payments').add({
+              'UID': generalAppUser['UID'],
+              'paidby': generalAppUser['email'],
+              'amount': 20,
+              'reason': 'Security Fee',
+              'time': DateTime.now(),
+            });
+
+            showSnackBarMsg(context, "Book Issued");
+          });
+        });
+      } catch (e) {
+        print(e);
+      }
+    }
+
+    void _assignMe() {
       showDialog(
-        context: context,
-        barrierDismissible:
-            false, // Don't let the user dismiss by tapping outside
-        builder: (context) {
-          return AlertDialog(
-            title: const Text("Security Fee"),
-            content: const Text(
-                "You need to pay the security fee before issuing this book i.e 20 Rs."),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context); // Close the dialog
-                },
-                child: const Text("Cancel"),
-              ),
-              TextButton(
-                onPressed: () async {
-                  // First, close the dialog before doing any further operations.
-                  Navigator.pop(context); // Close the dialog.
-
-                  // Perform the book issue process after closing the dialog.
-                  await fireStore
-                      .collection("books")
-                      .doc(widget.vatData.id)
-                      .update({
-                    'pieces': widget.vatData['pieces'] - 1,
-                    'assignedTo': FieldValue.arrayUnion([generalAppUser['UID']])
-                  }).then((value) async {
-                    await fireStore
-                        .collection(ALLUSERS)
-                        .doc(generalAppUser['UID'])
-                        .update({
-                      'Books_Issued': generalAppUser['Books_Issued'] + 1
-                    }).then((value) async {
-                      SharedPreferenceHelper sp = SharedPreferenceHelper();
-                      sp.saveBooksIssued(generalAppUser['Books_Issued'] + 1);
-                      Map<String, dynamic> bookInfo = {
-                        "title": widget.vatData['title'],
-                        "issued_on": DateTime.now().toString().split(' ')[0],
-                        "return_Date": DateTime.now()
-                            .add(Duration(days: 5))
-                            .toString()
-                            .split(' ')[0],
-                        "author": widget.vatData['author'],
-                        "image": widget.vatData['image'],
-                        "category": widget.vatData['category'],
-                      };
-                      await fireStore
-                          .collection(ALLUSERS)
-                          .doc(generalAppUser['UID'])
-                          .collection("Issued_Books")
-                          .doc(widget.vatData.id)
-                          .set(bookInfo);
-                      Map<dynamic, dynamic> loggedInUserData = {
-                        'email': generalAppUser["email"],
-                        'name': generalAppUser['name'],
-                        'phone': generalAppUser['phone'],
-                        'UID': generalAppUser['UID'],
-                        'profileUrl': generalAppUser['profileUrl'],
-                        'Books_Issued': (generalAppUser['Books_Issued'] + 1),
-                        'fine': generalAppUser['fine']
-                      };
-                      Provider.of<userDataProvider>(context, listen: false)
-                          .saveUser(loggedInUserData);
-
-                      fireStore.collection('payments').add({
-                        'UID': generalAppUser['UID'],
-                        'paidby': generalAppUser['email'],
-                        'amount': 20,
-                        'reason': 'Security Fee',
-                        'time': DateTime.now(),
-                      });
-
-                      showSnackBarMsg(context, "Book Issued");
-
-                      // Navigate after everything has been done
-                      Navigator.pushReplacement(
+          context: context,
+          builder: (context) => AlertDialog(
+                title: const Text("Security Fee"),
+                content: const Text(
+                    "You need to pay the security fee before issuing this book i.e 20 Rs."),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text("No"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  TextButton(
+                    child: Text("Yes"),
+                    onPressed: () {
+                      assignMe();
+                      Navigator.of(context).pop();
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => BookCategories()),
                       );
-                    });
-                  });
-                },
-                child: const Text("Pay Fee"),
-              ),
-            ],
-          );
-        },
-      );
+                    },
+                  ),
+                ],
+              ));
     }
 
     return Scaffold(
@@ -341,7 +347,7 @@ class _BookDetailState extends State<BookDetail> {
                           showSnackBarMsg(
                               context, "You already have exceeded the limit");
                         } else {
-                          showSecurityFeeDialog(context);
+                          _assignMe();
                         }
                       }
                     }
