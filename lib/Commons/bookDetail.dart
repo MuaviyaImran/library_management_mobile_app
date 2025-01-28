@@ -123,7 +123,7 @@ class _BookDetailState extends State<BookDetail> {
                     },
                   ),
                   TextButton(
-                    child: Text("Yes"),
+                    child: Text("Pay"),
                     onPressed: () {
                       assignMe();
                       Navigator.of(context).pop();
