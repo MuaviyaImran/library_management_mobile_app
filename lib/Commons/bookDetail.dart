@@ -78,7 +78,13 @@ class _BookDetailState extends State<BookDetail> {
                 .collection("Issued_Books")
                 .doc(widget.vatData.id)
                 .set(bookInfo);
-
+            fireStore.collection('payments').add({
+              'UID': generalAppUser['UID'],
+              'paidby': generalAppUser['email'],
+              'amount': 20,
+              'reason': 'Security Fee',
+              'time': DateTime.now(),
+            });
             // Update the logged-in user's data in the provider.
             Map<dynamic, dynamic> loggedInUserData = {
               'email': generalAppUser["email"],
@@ -93,13 +99,6 @@ class _BookDetailState extends State<BookDetail> {
                 .saveUser(loggedInUserData);
 
             // Record the security fee payment in Firestore.
-            fireStore.collection('payments').add({
-              'UID': generalAppUser['UID'],
-              'paidby': generalAppUser['email'],
-              'amount': 20,
-              'reason': 'Security Fee',
-              'time': DateTime.now(),
-            });
 
             showSnackBarMsg(context, "Book Issued");
           });

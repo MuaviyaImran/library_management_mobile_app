@@ -5,6 +5,8 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:library_management/Commons/PaymentsScreen.dart';
+import 'package:library_management/Commons/allFeedbacks.dart';
 import 'package:library_management/Commons/giveFeedback.dart';
 import 'package:library_management/Commons/allUsers.dart';
 import 'package:library_management/Commons/bookCategory.dart';
@@ -176,11 +178,11 @@ Widget drawer(context, userData) {
                     size: 15,
                   ),
                   onTap: () {
-                    // Navigator.pop(context);
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (context) => PayFee()),
-                    // );
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AllFeedbacks()),
+                    );
                   },
                 )
               : ListTile(
@@ -207,11 +209,11 @@ Widget drawer(context, userData) {
                     size: 15,
                   ),
                   onTap: () {
-                    // Navigator.pop(context);
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (context) => PayFee()),
-                    // );
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => PaymentScreen()),
+                    );
                   },
                 )
               : ListTile(
