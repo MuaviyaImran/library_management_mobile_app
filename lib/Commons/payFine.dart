@@ -82,7 +82,7 @@ class _PayFeeState extends State<PayFee> {
                   const SizedBox(height: 20),
                   fine > 0
                       ? Text(
-                          "Fine to be paid: Rs.$fine",
+                          "Fine to be paid: $fine Rs.",
                           style: const TextStyle(fontSize: 20),
                         )
                       : const Text(

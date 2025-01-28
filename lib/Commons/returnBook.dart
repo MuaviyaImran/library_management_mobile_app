@@ -88,12 +88,13 @@ class _ReturnBookState extends State<ReturnBook> {
               .collection('Issued_Books')
               .doc(id)
               .delete();
+
           DocumentSnapshot<Map<String, dynamic>> bookData =
               await fireStore.collection("books").doc(id).get();
-          await fireStore
-              .collection("books")
-              .doc(id)
-              .update({'pieces': (bookData['pieces'] + 1)});
+          await fireStore.collection("books").doc(id).update({
+            'pieces': (bookData['pieces'] + 1),
+            'assignedTo': FieldValue.arrayRemove([generalAppUser["UID"]]),
+          });
 
           showSnackBarMsg(context, "You Have been Fined for RS.500");
         });
@@ -125,10 +126,10 @@ class _ReturnBookState extends State<ReturnBook> {
             .update({'Books_Issued': userData['Books_Issued'] - 1});
         DocumentSnapshot<Map<String, dynamic>> bookData =
             await fireStore.collection("books").doc(id).get();
-        await fireStore
-            .collection("books")
-            .doc(id)
-            .update({'pieces': (bookData['pieces'] + 1)});
+        await fireStore.collection("books").doc(id).update({
+          'pieces': (bookData['pieces'] + 1),
+          'assignedTo': FieldValue.arrayRemove([generalAppUser["UID"]]),
+        });
 
         showSnackBarMsg(context, "Book Returned on time");
       } on FirebaseAuthException catch (e) {
