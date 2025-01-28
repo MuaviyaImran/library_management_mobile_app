@@ -16,7 +16,6 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../utils/colors.dart';
 import '../../utils/size_config.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 class DashBoard extends StatefulWidget {
   @override
