@@ -25,6 +25,14 @@ class MyFormValidator {
     }
   }
 
+  static String? validateStudentId({required String studentId}) {
+    if (studentId.length < 4) {
+      return "Student Id Must be more than four character";
+    } else {
+      return null;
+    }
+  }
+
   //Email Validation
   static String? validateEmail({required String email}) {
     Pattern pattern =

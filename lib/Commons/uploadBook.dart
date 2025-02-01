@@ -334,6 +334,7 @@ class _UploadBookState extends State<UploadBook> {
                               "category": _categoryController.text,
                               "description": _descController.text,
                               "assignedTo": [],
+                              "security": 20
                             };
                             FirebaseFirestore.instance
                                 .collection("books")

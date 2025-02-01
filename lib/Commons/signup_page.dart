@@ -15,6 +15,7 @@ TextEditingController nameController = TextEditingController();
 TextEditingController emailController = TextEditingController();
 TextEditingController passwordController = TextEditingController();
 TextEditingController phoneController = TextEditingController();
+TextEditingController studentId = TextEditingController();
 
 class SignUpPage extends StatefulWidget {
   SignUpPage({Key? key}) : super(key: key) {}
@@ -100,6 +101,25 @@ class _SignUpPageState extends State<SignUpPage> {
               },
             ),
           ),
+          // studendID
+          SizedBox(
+            height: 10,
+          ),
+          Container(
+            height: 50,
+            child: TextFormField(
+              controller: studentId,
+              keyboardType: TextInputType.text,
+              decoration: textFieldDecorationWithIcon(
+                  hint: "Enter Student Id", icon: Icons.confirmation_number),
+              validator: (arg) {
+                if (arg != null) {
+                  MyFormValidator.validateStudentId(studentId: arg);
+                }
+                return null;
+              },
+            ),
+          ),
           SizedBox(
             height: 15,
           ),
@@ -158,13 +178,15 @@ class _SignUpPageState extends State<SignUpPage> {
                       email: emailController.text,
                       name: nameController.text,
                       password: passwordController.text,
-                      phone: phoneController.text);
+                      phone: phoneController.text,
+                      studentId: studentId.text);
 
                   showSnackBarMsg(context, msg);
                   emailController.text = "";
                   nameController.text = "";
                   passwordController.text = "";
                   phoneController.text = "";
+                  studentId.text = "";
                 },
                 textColor: Colors.black,
                 child: Text("Sign Up"),

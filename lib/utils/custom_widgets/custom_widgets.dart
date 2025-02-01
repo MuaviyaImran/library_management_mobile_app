@@ -5,8 +5,12 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:library_management/Commons/PaymentsScreen.dart';
+import 'package:library_management/Commons/allFeedbacks.dart';
+import 'package:library_management/Commons/giveFeedback.dart';
 import 'package:library_management/Commons/allUsers.dart';
-import 'package:library_management/Commons/bookCollections.dart';
+import 'package:library_management/Commons/bookCategory.dart';
+import 'package:library_management/Commons/payFine.dart';
 import 'package:library_management/Commons/returnBook.dart';
 import 'package:library_management/Commons/totalReturns.dart';
 import 'package:library_management/Commons/uploadBook.dart';
@@ -144,7 +148,7 @@ Widget drawer(context, userData) {
               Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => BookCollections()),
+                MaterialPageRoute(builder: (context) => BookCategories()),
               );
             },
           ),
@@ -165,6 +169,68 @@ Widget drawer(context, userData) {
                   },
                 )
               : SizedBox(),
+          user.loggedInUserData['email'] == ADMIN_EMAIL
+              ? ListTile(
+                  leading: const Icon(Icons.feedback),
+                  title: const Text('All Feedbacks'),
+                  trailing: Icon(
+                    Icons.arrow_forward_ios,
+                    size: 15,
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AllFeedbacks()),
+                    );
+                  },
+                )
+              : ListTile(
+                  leading: const Icon(Icons.feedback),
+                  title: const Text('Give Feedback'),
+                  trailing: Icon(
+                    Icons.arrow_forward_ios,
+                    size: 15,
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => GiveFeedback()),
+                    );
+                  },
+                ),
+          user.loggedInUserData['email'] == ADMIN_EMAIL
+              ? ListTile(
+                  leading: const Icon(Icons.payment),
+                  title: const Text('All Payments'),
+                  trailing: Icon(
+                    Icons.arrow_forward_ios,
+                    size: 15,
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => PaymentScreen()),
+                    );
+                  },
+                )
+              : ListTile(
+                  leading: const Icon(Icons.payment),
+                  title: const Text('Pay Fine'),
+                  trailing: Icon(
+                    Icons.arrow_forward_ios,
+                    size: 15,
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => PayFee()),
+                    );
+                  },
+                ),
           Divider(
             thickness: 2,
           ),

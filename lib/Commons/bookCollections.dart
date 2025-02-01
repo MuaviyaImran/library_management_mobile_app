@@ -12,7 +12,8 @@ import 'package:library_management/utils/size_config.dart';
 import 'package:provider/provider.dart';
 
 class BookCollections extends StatefulWidget {
-  const BookCollections({Key? key}) : super(key: key);
+  final String category;
+  const BookCollections({Key? key, required this.category}) : super(key: key);
 
   @override
   State<BookCollections> createState() => _BookCollectionsState();
@@ -40,7 +41,7 @@ class _BookCollectionsState extends State<BookCollections> {
       ),
       appBar: AppBar(
         title: Text(
-          "Book Collections",
+          widget.category,
           style: TextStyle(
               fontSize: 19, color: Colors.white, fontFamily: 'Itim-Regular'),
         ),
@@ -90,7 +91,13 @@ class _BookCollectionsState extends State<BookCollections> {
                   List<DocumentSnapshot> filteredBooks =
                       snapshot.data!.docs.where((doc) {
                     String title = doc['title'].toString().toLowerCase();
-                    return title.contains(searchController.text.toLowerCase());
+                    String categoryItem =
+                        doc['category'].toString().toLowerCase();
+                    // category
+                    return title
+                            .contains(searchController.text.toLowerCase()) &&
+                        categoryItem.toLowerCase() ==
+                            widget.category.toLowerCase();
                   }).toList();
 
                   return Expanded(
@@ -131,6 +138,9 @@ class _BookCollectionsState extends State<BookCollections> {
                                               width: 120,
                                             )
                                           ],
+                                        ),
+                                        SizedBox(
+                                          width: 10,
                                         ),
                                         Column(
                                           mainAxisAlignment:

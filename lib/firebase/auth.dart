@@ -24,7 +24,8 @@ Future<String> signUp(
     required String email,
     required String name,
     required String password,
-    required String phone}) async {
+    required String phone,
+    required String studentId}) async {
   CustomProgressIndicatorDialog(context: context);
   String response = "";
   try {
@@ -40,6 +41,7 @@ Future<String> signUp(
           "createdOn": DateTime.now(),
           "uid": user.uid,
           "phone": phone,
+          "studentId": studentId.toUpperCase(),
           "Books_Issued": 0,
           "fine": 0,
           "profileUrl":

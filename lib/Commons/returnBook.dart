@@ -64,6 +64,11 @@ class _ReturnBookState extends State<ReturnBook> {
     String returnDateString = data['return_Date'];
     DateTime returnDate = DateTime.parse(returnDateString);
     DateTime today = DateTime.now();
+    // Calculate the difference between the return date and today
+    Duration difference = returnDate.difference(today);
+
+// The number of days difference
+    int numberOfDays = difference.inDays;
 
     if (returnDate.isBefore(today)) {
       // returnDate is before today's date
@@ -74,7 +79,7 @@ class _ReturnBookState extends State<ReturnBook> {
             .doc(generalAppUser["UID"])
             .get();
         await fireStore.collection(ALLUSERS).doc(generalAppUser["UID"]).update({
-          'fine': (userData['fine'] + 500),
+          'fine': (userData['fine'] + (numberOfDays * 50)),
           'Books_Issued': userData['Books_Issued'] - 1
         }).whenComplete(() async {
           await fireStore
@@ -83,12 +88,13 @@ class _ReturnBookState extends State<ReturnBook> {
               .collection('Issued_Books')
               .doc(id)
               .delete();
+
           DocumentSnapshot<Map<String, dynamic>> bookData =
               await fireStore.collection("books").doc(id).get();
-          await fireStore
-              .collection("books")
-              .doc(id)
-              .update({'pieces': (bookData['pieces'] + 1)});
+          await fireStore.collection("books").doc(id).update({
+            'pieces': (bookData['pieces'] + 1),
+            'assignedTo': FieldValue.arrayRemove([generalAppUser["UID"]]),
+          });
 
           showSnackBarMsg(context, "You Have been Fined for RS.500");
         });
@@ -120,10 +126,10 @@ class _ReturnBookState extends State<ReturnBook> {
             .update({'Books_Issued': userData['Books_Issued'] - 1});
         DocumentSnapshot<Map<String, dynamic>> bookData =
             await fireStore.collection("books").doc(id).get();
-        await fireStore
-            .collection("books")
-            .doc(id)
-            .update({'pieces': (bookData['pieces'] + 1)});
+        await fireStore.collection("books").doc(id).update({
+          'pieces': (bookData['pieces'] + 1),
+          'assignedTo': FieldValue.arrayRemove([generalAppUser["UID"]]),
+        });
 
         showSnackBarMsg(context, "Book Returned on time");
       } on FirebaseAuthException catch (e) {
